@@ -10,11 +10,8 @@ empty stack [0]
 # creates a stack with x
 
 class Stack:
-    def __init__(self, n=0):
-        if n < 0:
-            self.items = []
-        else:
-            self.items = [n]
+    def __init__(self):
+        self.items = []
 
     def push(self, item):
         self.items.append(item)
@@ -29,6 +26,9 @@ class Stack:
 
     def top(self):
         return self.items[-1]
+
+    def size(self):
+        return len(self.items)
 
 
 

@@ -15,6 +15,7 @@ class Frontier:
         self.depth = 1
         self.init = initial
         self.cutoff = False
+        self.total_item_pushed = 0
 
         # push te init-state into the stack
         self.stack.push(self.init)
@@ -24,6 +25,7 @@ class Frontier:
 
     def insert(self, x):
         if x.path_len() <= self.depth: # check if x is not too deep
+            self.total_item_pushed += 1
             self.stack.push(x)    # insert x to stack
         else:
             self.cutoff = True               # there is a reason to search deeper if needed
