@@ -1,35 +1,31 @@
-'''
+"""
 The state is a list of 2 items: the board, the path
 The target for 8-puzzle is: (zero is the hole)
 012
 345
 678
-'''
+"""
 import random
 import math
 
 class Maze:
-    
-    
-    def copy(self):
-        return Maze(self.width, self.height, self.maze, self.path)
-
     def __init__(self, width, height, maze=None, path=None):
         self.width = width
         self.height = height
-        
+
         if maze is None:
             self.maze = [[0 for _ in range(width)] for _ in range(height)]
         else:
             self.maze = maze
-        
+
         if path is None:
-            self.path = [(0,0)]
+            self.path = [(0, 0)]
         else:
             self.path = path
 
+    def copy(self):
+        return Maze(self.width, self.height, self.maze, self.path)
 
-        
     def initial(self):
         # Initialize all cells as walls
         for y in range(self.height):
@@ -51,11 +47,8 @@ class Maze:
     def user_location(self):
         return self.path[-1]
 
-
-
     #def make_move(self, x, y):
     #    self.path.append((x,y))
-
 
     def print_maze(self):
         for y in range(self.height):
@@ -84,19 +77,13 @@ class Maze:
             if 0 <= nx < self.width and \
                 0 <= ny < self.height and self.maze[ny][nx] == 0 and \
                 (nx, ny) not in self.path:
-                   
-                    
                     currpath = self.path[:]
                     currpath.append((nx, ny))
                     m = Maze(self.width, self.height, self.maze, currpath)
                     possible_moves.append(m)
 
         return possible_moves
-    
-    
+
     def path_len(self):
         # Count the number of '*' in the maze
         return len(self.path)
-    
- 
-

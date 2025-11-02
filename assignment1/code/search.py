@@ -1,16 +1,19 @@
 #search
 # זהו הפתרון של תרגיל 1 והוא מימוש בפייתון לפסיאודוקוד שהוצג בכיתה
 
-import state
-import frontier
+
+from state import Maze
+from frontier import Frontier
 
 def search(n):
-    s=state.Maze(n,n)
+    s = Maze(n,n)
     s.initial()
     s.print_maze()
-    f=frontier.create(s)
-    while not frontier.is_empty(f):
-        s=frontier.remove(f)
+    f = Frontier(s)
+    while not f.is_empty():
+        s = f.remove()
+        if s == 0:
+            return 0
         print()
         print("Current state: ")
         s.print_maze()
@@ -21,8 +24,6 @@ def search(n):
         print("next states: ")
         print([i.path for i in ns], end='')
         for i in ns:
-            frontier.insert(f,i)
+            f.insert(i)
     print("no solution")
     return 0
-
-search(5)
