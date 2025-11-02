@@ -1,6 +1,6 @@
 from search import *
 
-NUM_ITERATIONS = 1
+NUM_ITERATIONS = 100
 MAZE_SIZE = 5
 
 
@@ -39,6 +39,12 @@ def main():
     """
     Runs 100 iterations for each search algorithm and prints the aggregated statistics.
     """
+
+    import random
+    import time
+
+    random.seed(time.time())
+
     print(f"--- Running {NUM_ITERATIONS} Trials on Maze Size {MAZE_SIZE}x{MAZE_SIZE} ---")
 
     bfs_results = []
@@ -51,9 +57,9 @@ def main():
 
         # Using try-except to handle potential errors from Maze/Frontier imports/logic
         try:
-            bfs_results.append(bfs_search(MAZE_SIZE))
-            dfs_results.append(dfs_search(MAZE_SIZE))
-            id_results.append(id_search(MAZE_SIZE))
+            bfs_results.append(search_bfs(MAZE_SIZE))
+            dfs_results.append(search_dfs(MAZE_SIZE))
+            id_results.append(search_id(MAZE_SIZE))
 
             if i % 10 == 0:
                 print(f"Trial {i} completed...")
@@ -85,7 +91,7 @@ def main():
         print(f"Success Rate: {metrics['success_percent']:.2f}%")
         print(f"Avg Successful Iterations: {metrics['avg_success_iters']:.2f}")
         print(f"Avg Solution Path Length (Successful): {metrics['avg_success_path_length']:.2f}")
-        print(f"Avg Unsuccessful Iterations: {metrics['avg_fail_iters']:.2f}")
+        print(f"Avg Unsuccessful Iterations: {metrics['avg_fail_iters']:.2f}%")
 
     print("\n" + "=" * 50)
 

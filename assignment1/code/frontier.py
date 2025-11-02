@@ -1,20 +1,13 @@
-"""
-# יוצר מחסנית ״משוכללת״
-[stack, max. depth, init. state, try next level?]
-stack - a simple stack as defined at stack.py
-max.depth - the current search depth of ID
-init.state - the initial state of the problem
-try next level - is there a reason to search deeper
-"""
-from frontier_stack import FrontierStack
+from stack import Stack
 
 class Frontier:
     def __init__(self, initial):
-        self.stack = FrontierStack()
+        self.stack = Stack()
         self.depth = 1
         self.init = initial
         self.cutoff = False
-        self.total_item_pushed = 0
+        self.items_pushed = 0
+        self.max_items_pushed = 0
 
         # push te init-state into the stack
         self.stack.push(self.init)
@@ -24,7 +17,8 @@ class Frontier:
 
     def insert(self, x):
         if x.path_len() <= self.depth: # check if x is not too deep
-            self.total_item_pushed += 1
+            self.items_pushed += 1
+            self.max_items_pushed = max(self.stack.size(), self.max_items_pushed)
             self.stack.push(x)    # insert x to stack
         else:
             self.cutoff = True               # there is a reason to search deeper if needed
@@ -40,5 +34,8 @@ class Frontier:
 
         return self.stack.pop()   # if there are items in the stack ...
 
-    def max_depth(self):
-        return self.stack.total_item_pushed
+    def get_items_pushed(self):
+        return self.items_pushed
+
+    def get_max_items_pushed(self):
+        return self.max_items_pushed

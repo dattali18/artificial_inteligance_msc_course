@@ -3,10 +3,12 @@ from queue import Queue
 class FrontierQueue:
     def __init__(self):
         self.queue = Queue()
-        self.total_item_pushed = 0
+        self.items_pushed = 0
+        self.max_item_pushed = 0
 
     def enqueue(self, item):
-        self.total_item_pushed += 1
+        self.items_pushed += 1
+        self.max_item_pushed = max(self.max_item_pushed, self.size())
         self.queue.enqueue(item)
 
     def dequeue(self):
@@ -20,3 +22,9 @@ class FrontierQueue:
 
     def peek(self):
         return self.queue.peek()
+
+    def get_items_pushed(self):
+        return self.items_pushed
+
+    def get_max_item_pushed(self):
+        return self.max_item_pushed

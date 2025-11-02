@@ -1,13 +1,3 @@
-"""
-empty stack [0]
-
-[] stack that contains 3,2,1
-
-3 is the top of the stack
-"""
-
-
-# creates a stack with x
 
 class Stack:
     def __init__(self):
