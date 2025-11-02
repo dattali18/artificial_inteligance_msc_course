@@ -6,12 +6,11 @@ max.depth - the current search depth of ID
 init.state - the initial state of the problem
 try next level - is there a reason to search deeper
 """
-from stack import Stack
-from state import *
+from frontier_stack import FrontierStack
 
 class Frontier:
     def __init__(self, initial):
-        self.stack = Stack()
+        self.stack = FrontierStack()
         self.depth = 1
         self.init = initial
         self.cutoff = False
@@ -40,3 +39,6 @@ class Frontier:
                 return 0
 
         return self.stack.pop()   # if there are items in the stack ...
+
+    def max_depth(self):
+        return self.stack.total_item_pushed

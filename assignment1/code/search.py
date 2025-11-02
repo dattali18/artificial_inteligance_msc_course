@@ -20,7 +20,7 @@ def search(n):
         if s.is_goal():
             print("Reached the goal!")
             return s
-        ns=s.expand()
+        ns = s.expand()
         print("next states: ")
         print([i.path for i in ns], end='')
         for i in ns:
