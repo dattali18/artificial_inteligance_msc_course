@@ -1,12 +1,11 @@
-'''
+"""
 The state is a list of 2 items: the board, the path
-'''
+"""
+
 import random
 import math
 
 class Maze:
-    
-    
     def copy(self):
         return Maze(self.width, self.height, self.maze, self.path)
 
@@ -44,8 +43,6 @@ class Maze:
 
     def hdistance(self):
         return 0
-
-
 
     def print_maze(self):
         for y in range(self.height):

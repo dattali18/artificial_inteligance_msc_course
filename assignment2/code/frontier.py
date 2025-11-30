@@ -1,87 +1,120 @@
-'''
-implements a priority queue using a minimum heap
-the heap is represented by a list
-the parent of index i is in index (i-1)//2
-the left child of index i is in index 2i+1
-the right side of index i is in index 2i+2
-'''
+"""
+Implements a priority queue using a minimum heap.
+
+- The heap is represented by a list self.queue
+- The parent of index i is (i-1)//2  (equivalently (i+1)//2 - 1)
+- The left child of index i is 2*i+1
+- The right child of index i is 2*i+2
+
+This is a direct class conversion of the original procedural implementation.
+"""
 import state
+from typing import Any, Callable, List
 
-        
-    
-    
-def create(s, f):
-    return {"queue":[s], "function":f,"total":1,"max":1}      # returns a priority queue that contains s
 
-def is_empty(f):
-    return f["queue"]==[]    # returns true iff f is empty list
+class Frontier:
+    """
+    Priority queue backed by a min-heap.
 
-def parent(i):
-    return (i+1) //2 - 1 
+    Parameters:
+    - s: initial element to add to the queue
+    - function: a callable f(x) that returns the priority (lower is higher priority)
+    """
 
-def leftSon(i):
-    return (i+1)*2 - 1
+    def __init__(self, s: Any, function: Callable[[Any], float]):
+        self.queue: List[Any] = [s]
+        self.function = function
+        self.total: int = 1   # total insertions (keeps old behaviour)
+        self.max: int = 1     # maximum observed size (keeps old behaviour)
 
-def rightSon(i):
-    return (i+1) *2 
+    # ----- helper index utilities -----
+    def _parent(self, i: int) -> int:
+        return (i + 1) // 2 - 1
 
-def swap(l,x,y):
-    t=l[x]
-    l[x]=l[y]
-    l[y]=t
+    def _left(self, i: int) -> int:
+        return (i + 1) * 2 - 1
 
-def insert(pq, s):
-    
-    # inserts state s to the frontier
-    f=pq["queue"]
-    val=pq["function"]
-    f.append(s)     # inserts the new state as the last item
-    i=len(f)-1      # i gets its value
-    pq["total"]=pq["total"]+1
-    
-       
-    # move the item with smallest value to the root
-    while i>0 and val(f[i]) < val(f[parent(i)]): # while item i's value is smaller than the value of his father, swap!
-        # the next three lines swap i and his father
-        swap(f, i, parent(i))
-        i=parent(i)
+    def _right(self, i: int) -> int:
+        return (i + 1) * 2
 
-def remove(pq):      # remove and return the root of f
-    f=pq["queue"]
-    m=pq["max"]
-    if is_empty(pq): # underflow
-        return 0
-    if len(f)>m:
-        pq["max"]=len(f)
-    s=f[0]          # store the root that should be returned
-    f[0]=f[len(f)-1]    # the last leaf becomes the root
-    del f[-1]       # delete the last leaf
-    heapify(pq,0)    # fixing the heap
-    return s
+    def _swap(self, x: int, y: int) -> None:
+        self.queue[x], self.queue[y] = self.queue[y], self.queue[x]
 
- 
-'''
-for greedy best first search val returns hdistance
-for uniform cost val returns path len
+    # ----- public API -----
+    def is_empty(self) -> bool:
+        """Return True iff the queue is empty."""
+        return len(self.queue) == 0
 
-'''
+    def insert(self, s: Any) -> None:
+        """
+        Insert state s into the priority queue.
+        Moves the new element up to preserve the min-heap property.
+        """
+        self.queue.append(s)
+        i = len(self.queue) - 1
+        self.total += 1
 
-def heapify(pq,i):   # fix the heap by rolling down from index i
-    # compares f[i] with its children
-    # if f[i] is bigger than at least one of its children
-    # f[i] and its smallest child are swapped
-    minSon=i    # define i as minSon
-    val=pq["function"]
-    f=pq["queue"]
-    if leftSon(i)<len(f) and val(f[leftSon(i)])<val(f[minSon]):   # if f[i] has a left son
-                                        # and its left son is smaller than f[i]
-        minSon=leftSon(i)                    # define the left son as minSon
-    if rightSon(i)<len(f) and val(f[rightSon(i)])<val(f[minSon]):   # if f[i] has a right son
-                                        # and its right son is smaller than f[minSon]
-        minSon=rightSon(i)                    # define the right son as minSon
-    if minSon!=i:                       # if f[i] is bigger than one of its sons
-        swap(f,i,minSon)
-        heapify(pq,  minSon)              # repeat recursively
-        
-        
-    
+        # update max size seen
+        if len(self.queue) > self.max:
+            self.max = len(self.queue)
+
+        # bubble up while parent's priority is larger
+        while i > 0 and self.function(self.queue[i]) < self.function(self.queue[self._parent(i)]):
+            p = self._parent(i)
+            self._swap(i, p)
+            i = p
+
+    def remove(self) -> Any:
+        """
+        Remove and return the root (minimum element). Returns 0 on underflow
+        to match the original implementation.
+        """
+        if self.is_empty():
+            return 0  # underflow like original code
+
+        # keep parity with original code which updated max in remove()
+        if len(self.queue) > self.max:
+            self.max = len(self.queue)
+
+        root = self.queue[0]
+        # move last element to root and pop the last
+        self.queue[0] = self.queue[-1]
+        self.queue.pop()
+
+        if not self.is_empty():
+            self._heapify(0)
+
+        return root
+
+    # ----- internal heap maintenance -----
+    def _heapify(self, i: int) -> None:
+        """
+        Fix the heap by rolling down from index i.
+        If node i is larger than any child, swap with the smallest child and recurse.
+        """
+        min_son = i
+        l = len(self.queue)
+        if self._left(i) < l and self.function(self.queue[self._left(i)]) < self.function(self.queue[min_son]):
+            min_son = self._left(i)
+        if self._right(i) < l and self.function(self.queue[self._right(i)]) < self.function(self.queue[min_son]):
+            min_son = self._right(i)
+        if min_son != i:
+            self._swap(i, min_son)
+            self._heapify(min_son)
+
+    # convenience
+    def peek(self) -> Any:
+        """Return the root without removing it; return None if empty."""
+        return None if self.is_empty() else self.queue[0]
+
+    def __len__(self) -> int:
+        return len(self.queue)
+
+
+# Example usage (keep commented or remove when integrating):
+# def priority_fn(x): return x  # for numeric priorities
+# pq = Fortier(5, priority_fn)
+# pq.insert(3)
+# pq.insert(7)
+# print(pq.remove())  # -> 3
+# print(pq.remove())  # -> 5

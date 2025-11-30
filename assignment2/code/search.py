@@ -1,28 +1,29 @@
 #search
 #Pseudo code for exercise 2
 
-import state
-import frontier
+from state import Maze
+from frontier import Frontier
+
 
 def search(n):
-    s=state.Maze(n,n)
+    s = Maze(n,n)
     s.initial()
     s.print_maze()
-    f=frontier.create(s, lambda stat: stat.hdistance()+stat.path_len())
-    while not frontier.is_empty(f):
-        s=frontier.remove(f)
-        print()
+    f = Frontier(s, lambda stat: stat.hdistance() + stat.path_len())
+    while not f.is_empty():
+        s = f.remove()
+        print("")
         print("Current state: ")
         s.print_maze()
 
         if s.is_goal():
             print("Reached the goal!")
             return s
-        ns=s.expand()
+        ns = s.expand()
         print("next states: ")
         print([i.path for i in ns], end='')
         for i in ns:
-            frontier.insert(f,i)
+            f.insert(i)
     print("no solution")
     return 0
 
