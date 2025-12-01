@@ -26,15 +26,20 @@ class Frontier:
         self.function = function
         self.total: int = 1   # total insertions (keeps old behaviour)
         self.max: int = 1     # maximum observed size (keeps old behaviour)
+        self.open: List[Any] = []
+        self.close: List[Any] = []
 
     # ----- helper index utilities -----
-    def _parent(self, i: int) -> int:
+    @staticmethod
+    def _parent(i: int) -> int:
         return (i + 1) // 2 - 1
 
-    def _left(self, i: int) -> int:
+    @staticmethod
+    def _left(i: int) -> int:
         return (i + 1) * 2 - 1
 
-    def _right(self, i: int) -> int:
+    @staticmethod
+    def _right(i: int) -> int:
         return (i + 1) * 2
 
     def _swap(self, x: int, y: int) -> None:
